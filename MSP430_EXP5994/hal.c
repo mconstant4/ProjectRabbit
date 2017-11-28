@@ -110,7 +110,7 @@ void ConfigureLcdDisplay(void) {
 void ConfigureAdcModule(void) {
     // By default, REFMSTR=1 => REFCTL is used to configure the internal reference
     while(REFCTL0 & REFGENBUSY);            // If ref generator busy, WAIT
-    REFCTL0 |= REFVSEL_0 | REFON;           // Select internal ref = 1.2V
+    REFCTL0 |= REFVSEL_2 | REFON;           // Select internal ref = 2.5V
 
     // Configure ADC12 Module
     ADC12CTL0 = 0x0000;                     // Reset ADC12CTL0
@@ -132,7 +132,7 @@ void ConfigureAdcModule(void) {
     ADC12IER0 |= ADC12IE0;                  // Enable ADC conv complete interrupt (do not use if polling result)
     ADC12MCTL0 &= ~ADC12DIF;                // Single Ended Mode
     ADC12MCTL0 |= ADC12INCH_2;              // A2 ADC Input Select
-    ADC12MCTL0 |= ADC12VRSEL_1;             // Vref=1.2V (internal)
+    ADC12MCTL0 |= ADC12VRSEL_1;             // Vref+ = VREF Buffered, Vref- = AVSS
 }
 
 void HAL_StartAdcModule(void) {

@@ -17,26 +17,27 @@ int main(void) {
 
 
     HAL_StartSquareWave();              // Start Square Wave
+    HAL_StartAdcModule();               // Start ADC
     // TODO: Output Vref                // TODO: Figure out output pin
     while(TRUE) {
-        __delay_cycles(500000);
-
-        lcd_command(0x01);              // Just a simple timer right now
-        char display[20];
-        int_to_char(display, test_value, 20);
-        lcd_write(display, 20);
-        test_value++;
+//        lcd_command(0x01);              // Just a simple timer right now
+//        char display[20];
+//        int_to_char(display, test_value, 20);
+//        lcd_write(display, 20);
+//        test_value++;
         // TODO: Toggle V/I Mux         // Need to add wires for this
-//        HAL_StartAdcModule();         // Start ADC
+
         /*  Alternative to Interrupt-Driven ADC */
-//        while(TRUE) {
-//            ADC12CTL0 |= ADC12SC;               // Start conversion-software trigger
-//            while (!(ADC12IFGR0 & BIT0));
-//            ADCvar = ADC12MEM0;                 // Read conversion result
-//            __no_operation();                   // SET BREAKPOINT HERE
-//        }
-//        HAL_StopAdcModule();          // Stop ADC
-//
+        __delay_cycles(500000);             // ~0.5 seconds
+
+        ADC12CTL0 |= ADC12SC;               // Start conversion-software trigger
+        while (!(ADC12IFGR0 & BIT0));
+        lcd_command(0x01);                  // Clear LCD Display
+        int ADCvar = ADC12MEM0;             // Read conversion result
+        char display[20];
+        int_to_char(display, ADCvar, 20);   // Convert Result to String
+        lcd_write(display, 20);             // Display String on LCD
+//        HAL_StopAdcModule();                // Stop ADC
 //        __bis_SR_register(LPM0_bits + GIE); // LPM0, ADC12_ISR will force exit
 //        __no_operation();                   // For debug only
     }
@@ -48,8 +49,8 @@ int main(void) {
  */
 void int_to_char (char* str, int val, int length) {
   unsigned int i;
-  for(i = 1; i <= digits; i++) {
-      str[digits-i] = (char)((val % 10u) + '0');
+  for(i = 1; i <= length; i++) {
+      str[length-i] = (char)((val % 10u) + '0');
       val /= 10u;
   }
 }
