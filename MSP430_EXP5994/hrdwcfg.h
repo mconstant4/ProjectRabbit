@@ -72,6 +72,12 @@
 #define ADC_TEST_PORT_DIR    P1DIR
 #define ADC_TEST_PIN         BIT2
 
-// TODO: MUX Pins?
+#define MUX_SEL0_PORT_OUT   P3OUT           // Mux Select 0
+#define MUX_SEL0_PORT_SEL0  P3SEL0
+#define MUX_SEL0_PORT_SEL1  P3SEL1
+#define MUX_SEL0_PORT_DIR   P3DIR
+#define MUX_SEL0_PIN        BIT4
+
+// MUX_SEL1 -> GND
 
 #endif /* HRDWCFG_H_ */

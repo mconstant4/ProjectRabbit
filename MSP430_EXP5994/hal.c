@@ -7,6 +7,7 @@
 
 #include <msp430.h>
 #include <hal.h>
+#include "hrdwcfg.h"
 #include "lcd_driver.h"
 
 // Local Function Declarations
@@ -60,6 +61,8 @@ void ConfigureBoardDefaults(void) {
     PCIFG   &=  0x0000;
     PDIFG   &=  0x0000;
 
+    BLANK_SIG_PORT_OUT |= BLANK_SIG_PIN;        // Set Blanking Signal to HIGH (for now)
+
     PM5CTL0 &= ~LOCKLPM5;       // Clear the LOCKLPM5 bit
 }
 
@@ -99,11 +102,11 @@ void ConfigureLcdDisplay(void) {
  *              +Vref = 0x0FFF (>+Vref = 0xFFFF)
  *              -Vref = 0x0000 (<-Vref = 0x0000)
  *
- * Vref+ = 1.2v
+ * Vref+ = 2.5v
  * Vref- = 0v
  *
- * Signal Resolution (SR) = (Vref+-Vref-)/2^n   => SR = 292.969uV/bit
- * ADC Code = Input Voltage/SR                  => ADC Code = Vin/0.000292969 OR Vin = ADC Code * 0.000292969
+ * Signal Resolution (SR) = (Vref+-Vref-)/2^n   => SR = 610uV/bit
+ * ADC Code = Input Voltage/SR                  => ADC Code = Vin/0.000610 OR Vin = ADC Code * 0.000610
  *
  * TODO: Set Vref to output pin?
  */
@@ -168,4 +171,9 @@ void HAL_StartSquareWave(void) {
  */
 void HAL_StopSquareWave(void) {
     TA4CTL = MC__STOP;
+}
+
+void HAL_ToggleSource(void) {
+    // Keep Low for now
+    MUX_SEL0_PORT_OUT &= ~MUX_SEL0_PIN;
 }

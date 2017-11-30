@@ -7,18 +7,20 @@
  * main.c
  */
 
+#define LCD_DISPLAY_SIZE    20
+
 // Local Function Declarations
 void int_to_char (char* str, int val, int digits);
 
 int main(void) {
 	WDTCTL = WDTPW | WDTHOLD;	        // stop watchdog timer
 	HAL_ConfigureHardware();            // Initialize all hardware components and peripherals
-	
-
 
     HAL_StartSquareWave();              // Start Square Wave
     HAL_StartAdcModule();               // Start ADC
     // TODO: Output Vref                // TODO: Figure out output pin
+    int ADCvar;                         // Holds the value of the ADC Code
+    char display[LCD_DISPLAY_SIZE];     // Holds the value to be displayed on the LCD
     while(TRUE) {
 //        lcd_command(0x01);              // Just a simple timer right now
 //        char display[20];
@@ -29,14 +31,23 @@ int main(void) {
 
         /*  Alternative to Interrupt-Driven ADC */
         __delay_cycles(500000);             // ~0.5 seconds
-
+        // Get Current (voltage for now, until mux implemented)
+        HAL_ToggleSource();
         ADC12CTL0 |= ADC12SC;               // Start conversion-software trigger
         while (!(ADC12IFGR0 & BIT0));
         lcd_command(0x01);                  // Clear LCD Display
-        int ADCvar = ADC12MEM0;             // Read conversion result
-        char display[20];
-        int_to_char(display, ADCvar, 20);   // Convert Result to String
-        lcd_write(display, 20);             // Display String on LCD
+        ADCvar = ADC12MEM0;                 // Read conversion result
+        int_to_char(display, ADCvar, LCD_DISPLAY_SIZE);   // Convert Result to String
+        lcd_write(display, LCD_DISPLAY_SIZE);             // Display String on LCD
+
+//        __delay_cycles(500000);
+//        // Get Voltage
+//        HAL_ToggleSource();
+//        ADC12CTL0 |= ADC12SC;               // Start conversion-software trigger
+//        while (!(ADC12IFGR0 & BIT0));
+//        ADCvar = ADC12MEM0;                 // Read conversion result
+//        int_to_char(display, ADCvar, 21);   // Convert Result to String
+//        lcd_write(display, 21);             // Display String on LCD
 //        HAL_StopAdcModule();                // Stop ADC
 //        __bis_SR_register(LPM0_bits + GIE); // LPM0, ADC12_ISR will force exit
 //        __no_operation();                   // For debug only

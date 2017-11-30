@@ -15,5 +15,6 @@ void HAL_StartSquareWave(void);
 void HAL_StopSquareWave(void);
 void HAL_StartAdcModule(void);
 void HAL_StopAdcModule(void);
+void HAL_ToggleSource(void);
 
 #endif /* HAL_H_ */
